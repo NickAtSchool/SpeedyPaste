@@ -70,7 +70,7 @@ Public Class SnippingTool
         Using snipper = New SnippingTool(bmp)
 
             snipper.Location = New Point(m_MultiScreenSize.minX, m_MultiScreenSize.minY)
-
+            snipper.TopMost = True
             If snipper.ShowDialog() = DialogResult.OK Then
                 Return snipper.Image
             End If
