@@ -26,9 +26,10 @@ Partial Class SnippingTool
         '
         'SnippingTool
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 262)
+        Me.ClientSize = New System.Drawing.Size(379, 322)
+        Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "SnippingTool"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "SnippingTool"

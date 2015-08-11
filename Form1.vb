@@ -3,12 +3,12 @@ Imports System.Net
 Imports System.IO
 Imports System.Text
 Imports System.Collections.Specialized
+Imports Newtonsoft.Json
 
 Public Class Form1
     Private Declare Sub mouse_event Lib "user32.dll" (ByVal dwFlags As Integer, ByVal dx As Integer, ByVal dy As Integer, ByVal cButtons As Integer, ByVal dwExtraInfo As IntPtr)
     Private WithEvents kbHook As New KeyboardHook
     Private Shared threadStack As Stack = New Stack()
-
 
 
     Public Shared Function UploadFilesToRemoteUrl(url As String, files As String(), logpath As String, nvc As NameValueCollection)
@@ -88,20 +88,6 @@ Public Class Form1
         Return responseText
     End Function
 
-    'Private Function uploadImage(ByRef targetImage As Byte())
-    '    Dim request As WebRequest = WebRequest.Create("http://unkk1eed8234.nick9321.koding.io/image")
-    '    request.Credentials = CredentialCache.DefaultCredentials
-    '    CType(request, HttpWebRequest).UserAgent = ".NET Framework Example Client"
-    '    request.Method = "POST"
-    '    request.ContentLength = targetImage.Length
-    '    request.ContentType = "application/x-www-form-urlencoded"
-    '    Dim dataStream As Stream = request.GetRequestStream()
-    '    dataStream.Write(targetImage, 0, targetImage.Length)
-    '    dataStream.Close()
-    '    Dim response As WebResponse = request.GetResponse()
-
-    '    Return response
-    'End Function
     Private Sub PerformSnipOperation()
         Dim snipImage As Image = SnippingTool.Snip()
         Dim result As Byte()
@@ -116,20 +102,11 @@ Public Class Form1
 
 
 
-        Dim Response As String = UploadFilesToRemoteUrl("http://unkk1eed8234.nick9321.koding.io/image", {"tmpImage.png"}, "asdf.html", nameCollection) ' uploadImage(Encoding.UTF8.GetBytes("anus")) 'ImageByteArr)
+        Dim Response As String = UploadFilesToRemoteUrl("http://192.168.10.10/image", {"tmpImage.png"}, "asdf.html", nameCollection)
 
+        Dim apiResponse = JsonConvert.DeserializeObject(Response)
 
-        'Dim wc As System.Net.WebClient = New System.Net.WebClient()
-        'result = wc.UploadData("http://unkk1eed8234.nick9321.koding.io/image", ImageByteArr)
-        'Dim str = System.Text.Encoding.Default.GetString(result)
-
-        'Dim reader As New StreamReader(Response.GetResponseStream())
-        '' Read the content.
-        'Dim responseFromServer As String = reader.ReadToEnd()
-        'Dim file = System.IO.File.CreateText("asdf.html")
-        'file.Write(responseFromServer)
-        'file.Close()
-        'RichTextBox1.Text = str
+        Clipboard.SetText(apiResponse.item("url"))
 
         threadStack.Pop()
     End Sub
@@ -139,6 +116,7 @@ Public Class Form1
         ListBox1.SelectedIndex = ListBox1.Items.Count - 1
         If Key = Keys.PrintScreen Then
             Dim toolThread As New Thread(AddressOf PerformSnipOperation)
+            toolThread.TrySetApartmentState(ApartmentState.STA)
             toolThread.Start()
             threadStack.Push(toolThread)
         ElseIf Key = Keys.Escape Then

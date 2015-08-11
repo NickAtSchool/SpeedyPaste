@@ -2,8 +2,6 @@
 
 'SnippingTool Code: Place this in a new form (set the StartUp Property to Manual)'
 Public Class SnippingTool
-
-
     Private Shared _Screen As Screen
 
     Private Shared BitmapSize As Size
@@ -52,6 +50,7 @@ Public Class SnippingTool
         End With
         Return m_MultiScreenSize
     End Function
+
     Public Shared Function Snip() As Image
         Dim m_MultiScreenSize As MultiScreenSize = FindMultiScreenSize()
 
@@ -66,20 +65,14 @@ Public Class SnippingTool
         gr.SmoothingMode = Drawing2D.SmoothingMode.None
         BitmapSize = bmp.Size
 
-
         Using snipper = New SnippingTool(bmp)
-
             snipper.Location = New Point(m_MultiScreenSize.minX, m_MultiScreenSize.minY)
-            snipper.TopMost = True
             If snipper.ShowDialog() = DialogResult.OK Then
                 Return snipper.Image
             End If
-
         End Using
 
         Return Nothing
-
-
     End Function
 
 
