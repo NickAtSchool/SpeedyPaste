@@ -10,9 +10,8 @@ Public Class Form1
     Private WithEvents kbHook As New KeyboardHook
     Private Shared threadStack As Stack = New Stack()
 
-
+    'TODO: Extend to allow posting files as byte[]
     Public Shared Function UploadFilesToRemoteUrl(url As String, files As String(), logpath As String, nvc As NameValueCollection)
-
         Dim length As Long = 0
         Dim boundary As String = "----------------------------" + DateTime.Now.Ticks.ToString("x")
 
@@ -52,11 +51,7 @@ Public Class Form1
                     Exit While
                 End If
             End While
-
-
             memStream.Write(boundarybytes, 0, boundarybytes.Length)
-
-
             fileStream.Close()
         Next
 
@@ -90,47 +85,26 @@ Public Class Form1
 
     Private Sub PerformSnipOperation()
         Dim snipImage As Image = SnippingTool.Snip()
-        Dim result As Byte()
         Dim converter As New ImageConverter
         Dim ImageByteArr = converter.ConvertTo(snipImage, GetType(Byte()))
         Dim image = System.IO.File.Create("tmpImage.png")
         image.Write(ImageByteArr, 0, ImageByteArr.length)
         image.Close()
-
         Dim nameCollection As NameValueCollection = New NameValueCollection()
-        nameCollection.Add("name", "value")
-
-
-
         Dim Response As String = UploadFilesToRemoteUrl("http://192.168.10.10/image", {"tmpImage.png"}, "asdf.html", nameCollection)
-
         Dim apiResponse = JsonConvert.DeserializeObject(Response)
-
         Clipboard.SetText(apiResponse.item("url"))
-
-        threadStack.Pop()
     End Sub
 
     Private Sub kbHook_KeyDown(ByVal Key As System.Windows.Forms.Keys) Handles kbHook.KeyDown
         ListBox1.Items.Add(Key.ToString())
         ListBox1.SelectedIndex = ListBox1.Items.Count - 1
         If Key = Keys.PrintScreen Then
-            Dim toolThread As New Thread(AddressOf PerformSnipOperation)
-            toolThread.TrySetApartmentState(ApartmentState.STA)
-            toolThread.Start()
-            threadStack.Push(toolThread)
-        ElseIf Key = Keys.Escape Then
-            Try
-                Dim mostRecentSnipper As Thread = threadStack.Pop()
-                mostRecentSnipper.Abort()
-            Catch
-                'If the stack is empty, we won't be able to pop. So we ignore the fact that the user pressed enter
-            End Try
+            PerformSnipOperation()
         End If
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         SnippingTool.Snip()
     End Sub
-
 End Class

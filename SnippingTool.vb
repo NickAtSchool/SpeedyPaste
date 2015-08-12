@@ -67,14 +67,17 @@ Public Class SnippingTool
 
         Using snipper = New SnippingTool(bmp)
             snipper.Location = New Point(m_MultiScreenSize.minX, m_MultiScreenSize.minY)
+            'snipper.Show()
+            'snipper.Focus()
+            'snipper.TopMost = True
             If snipper.ShowDialog() = DialogResult.OK Then
                 Return snipper.Image
+                'System.Threading.Thread.Sleep(1000)
             End If
         End Using
 
         Return Nothing
     End Function
-
 
 
     Public Sub New(ByVal screenShot As Image)
@@ -151,13 +154,13 @@ Public Class SnippingTool
         End Using
     End Sub
 
-    'Protected Overrides Function ProcessCmdKey(ByRef msg As Message, ByVal keyData As Keys) As Boolean
-    '    ' Allow canceling the snip with the Escape key'
-    '    If keyData = Keys.Escape Then
-    '        Me.DialogResult = DialogResult.Cancel
-    '    End If
-    '    Return MyBase.ProcessCmdKey(msg, keyData)
-    'End Function
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, ByVal keyData As Keys) As Boolean
+        ' Allow canceling the snip with the Escape key'
+        If keyData = Keys.Escape Then
+            Me.DialogResult = DialogResult.Cancel
+        End If
+        Return MyBase.ProcessCmdKey(msg, keyData)
+    End Function
 
     Protected Overrides Sub OnLoad(ByVal e As System.EventArgs)
         MyBase.OnLoad(e)
@@ -166,6 +169,7 @@ Public Class SnippingTool
                            m_MultiScreenSize.maxBottom - m_MultiScreenSize.minY)
 
         Graph.CopyFromScreen(m_MultiScreenSize.minX, m_MultiScreenSize.minY, 0, 0, BitmapSize)
+        Me.TopMost = True
     End Sub
 End Class
 
